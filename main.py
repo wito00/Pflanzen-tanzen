@@ -1,24 +1,22 @@
-import RPi.GPIO as GPIO
+import spidev
 import time
 
-# Define GPIO pin
-DIGITAL_PIN = 17  # Replace 17 with the GPIO pin you're using
+# SPI Configuration
+spi = spidev.SpiDev()
+spi.open(0, 0)  # Open SPI bus 0, device (CS) 0
+spi.max_speed_hz = 1350000
 
-# Set up the GPIO
-GPIO.setmode(GPIO.BCM)  # Use Broadcom pin numbering
-GPIO.setup(DIGITAL_PIN, GPIO.IN)  # Set the pin as an input
+# Function to read ADC value from MCP3008
+def read_channel(channel):
+    adc = spi.xfer2([1, (8 + channel) << 4, 0])  
+    data = ((adc[1] & 3) << 8) + adc[2]
+    return data
 
 try:
     while True:
-        # Read digital value
-        if GPIO.input(DIGITAL_PIN):
-            print("Soil is dry.")
-        else:
-            print("Soil is wet.")
+        moisture_value = read_channel(0)  # Reading from CH0
+        print(f"Moisture Level: {moisture_value}")
         time.sleep(1)
-
 except KeyboardInterrupt:
-    print("Exiting program...")
-
-finally:
-    GPIO.cleanup()  # Reset GPIO settings
+    spi.close()
+    print("Program Stopped.")
