@@ -1,22 +1,21 @@
 import spidev
 import time
 
-# SPI Configuration
+# Initialize SPI
 spi = spidev.SpiDev()
-spi.open(0, 0)  # Open SPI bus 0, device (CS) 0
-spi.max_speed_hz = 1350000
+spi.open(0, 0)  # Bus 0, Device 0 (CE0)
+spi.max_speed_hz = 1350000  # SPI clock speed
 
-# Function to read ADC value from MCP3008
 def read_channel(channel):
-    adc = spi.xfer2([1, (8 + channel) << 4, 0])  
-    data = ((adc[1] & 3) << 8) + adc[2]
+    """Read data from an ADC channel (0-7)"""
+    if channel < 0 or channel > 7:
+        return -1
+    adc = spi.xfer2([1, (8 + channel) << 4, 0])
+    data = ((adc[1] & 3) << 8) + adc[2]  # Convert to 10-bit value
     return data
 
-try:
-    while True:
-        moisture_value = read_channel(0)  # Reading from CH0
-        print(f"Moisture Level: {moisture_value}")
-        time.sleep(1)
-except KeyboardInterrupt:
-    spi.close()
-    print("Program Stopped.")
+while True:
+    moisture_value = read_channel(0)  # Read from CH0
+    percentage = (1 - (moisture_value / 1023)) * 100  # Convert to % (drier is higher)
+    print(f"Soil Moisture: {percentage:.2f}%")
+    time.sleep(1)
