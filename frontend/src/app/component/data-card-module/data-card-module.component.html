@@ -1,0 +1,30 @@
+<div class="card" style="width: 80%; margin: 30px auto;">
+  <div class="card-content">
+    <h5>Current Data</h5>
+    <div class="grid-container">
+      <div class="grid-item">
+        <h6>Humidity Level</h6>
+        <p>{{ data?.humidityLevel || 'N/A' }}</p>
+        <p class="text-secondary">Optimal humidity is between 40% and 60%.</p>
+      </div>
+      <div class="grid-item">
+        <h6>Soil Moisture</h6>
+        <p>{{ data?.soilMoisture || 'N/A' }}</p>
+        <p class="text-secondary">Ensure soil stays moderately moist.</p>
+      </div>
+      <div class="grid-item">
+        <h6>Temperature</h6>
+        <p>{{ data?.temperature || 'N/A' }}°C</p>
+        <p class="text-secondary">Ideal temperature range is 18°C to 24°C.</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="data?.humidityLevel === 0 || data?.soilMoisture === 0" class="alert warning">
+    ⚠ Ground humidity or soil moisture is at 0! Please check and water your plants if needed.
+  </div>
+
+  <div *ngIf="data?.temperature < 15" class="alert info">
+    ℹ Temperature is lower than usual. Consider adjusting the environment.
+  </div>
+</div>

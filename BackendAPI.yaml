@@ -1,0 +1,107 @@
+openapi: 3.0.0
+info:
+  title: IoT-Daten-API
+  description: API zum Abrufen von Daten von IoT-Geräten und zum Senden von Befehlen.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Lokaler Server
+
+paths:
+  /iot/data:
+    get:
+      summary: Aktuelle Daten von IoT-Geräten abrufen
+      description: Gibt aktuelle Messwerte wie Temperatur, Luftfeuchtigkeit und Bodenfeuchtigkeit zurück.
+      operationId: getIoTData
+      responses:
+        '200':
+          description: Erfolgreiche Antwort mit Daten
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IoTData'
+        '500':
+          description: Serverfehler
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /iot/command:
+    post:
+      summary: Befehl an ein IoT-Gerät senden
+      description: Sendet einen Befehl an ein IoT-Gerät, um eine bestimmte Aktion auszuführen.
+      operationId: sendIoTCommand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IoTCommand'
+      responses:
+        '200':
+          description: Befehl erfolgreich gesendet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+        '400':
+          description: Ungültige Anfrage
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Serverfehler
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    IoTData:
+      type: object
+      properties:
+        humidityLevel:
+          type: number
+          example: 45
+          description: Luftfeuchtigkeitsniveau (in Prozent)
+        soilMoisture:
+          type: number
+          example: 30
+          description: Bodenfeuchtigkeit (in Prozent)
+        temperature:
+          type: number
+          example: 22.5
+          description: Temperatur (in Grad Celsius)
+
+    IoTCommand:
+      type: object
+      properties:
+        command:
+          type: string
+          example: "turn_off_light"
+          description: Befehl für das Gerät
+
+    CommandResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "success"
+          description: Status der Befehlsausführung
+        message:
+          type: string
+          example: "Befehl erfolgreich ausgeführt"
+          description: Beschreibung des Ausführungsergebnisses
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Interner Serverfehler"
+        message:
+          type: string
+          example: "Ein unerwarteter Fehler ist aufgetreten"

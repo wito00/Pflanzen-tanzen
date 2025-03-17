@@ -1,0 +1,22 @@
+<mat-card style="width: 80%; margin: 30px auto;">
+  <mat-card-content>
+    <h2>Plant Information</h2>
+    <div class="grid-container">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Plant Name</mat-label>
+        <input matInput name="name" [(ngModel)]="plantData.name" [disabled]="!isEditable">
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Species</mat-label>
+        <input matInput name="species" [(ngModel)]="plantData.species" [disabled]="!isEditable">
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Watering Schedule</mat-label>
+        <input matInput name="wateringSchedule" [(ngModel)]="plantData.wateringSchedule" [disabled]="!isEditable">
+      </mat-form-field>
+    </div>
+    <button mat-raised-button color="primary" (click)="handleEditToggle()" style="margin-top: 20px;">
+      {{ isEditable ? 'Save' : 'Edit' }}
+    </button>
+  </mat-card-content>
+</mat-card>
